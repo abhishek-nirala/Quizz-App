@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  background-color:#123;
+  color: rgba(52, 249, 12, 0.87);
+
+  margin-left: 3rem;
+
+  /* border-bottom: 5px solid greenyellow; */
+  /* max-width: 700px; */
+}
+
+
+h3{
+  font-size: 30px;
+  color: greenyellow;
+}
+
+
+
+
+
