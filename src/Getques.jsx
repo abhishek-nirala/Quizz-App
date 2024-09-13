@@ -1,7 +1,8 @@
-import axios from "axios";
+// import axios from "axios";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import "./App.css";
+// import { data } from "autoprefixer";
 
 const socket = io("http://localhost:3000");
 
@@ -16,30 +17,39 @@ function Getques() {
   useEffect(() => {
     async function getQues() {
       try {
-        const response = await axios.get(
-          "https://opentdb.com/api.php?amount=1"
-        );
-        console.log(response);
+        // const response = await axios.get(
+        //   "https://opentdb.com/api.php?amount=1"
+        // );
+        // console.log(response);
 
-        setCategory(response.data.results[0].category);
-        setQues(response.data.results[0].question);
+        // setCategory(response.data.results[0].category);
+        // setQues(response.data.results[0].question);
 
-        const correctAnswer = response.data.results[0].correct_answer;
-        let options = [
-          correctAnswer,
-          ...response.data.results[0].incorrect_answers,
-        ];
+        // const correctAnswer = response.data.results[0].correct_answer;
+        // let options = [
+        //   correctAnswer,
+        //   ...response.data.results[0].incorrect_answers,
+        // ];
 
-        let shuffledOptions = shuffle(options);
-        let correctAnswerIndex = shuffledOptions.indexOf(correctAnswer);
+        // let shuffledOptions = shuffle(options);
+        // let correctAnswerIndex = shuffledOptions.indexOf(correctAnswer);
 
-        setOption(shuffledOptions);
-        setCorrectIndex(correctAnswerIndex);
-        setSelectedOption(null); // Reset selected option for each new question
+        // setOption(shuffledOptions);
+        // setCorrectIndex(correctAnswerIndex);
+        // setSelectedOption(null); // Reset selected option for each new question
 
-        socket.on("other-player-selected", (data) => {
-          setOtherPersonSelected(data.selectedOption);
-        });
+        socket.on('apiRes', (data)=>{
+          setCategory(data.category)
+          setQues(data.ques)
+          let options = [data.correct_answer, ...data.incorrect_answer]
+          console.log(options);
+          
+          setOption(options)
+        })
+
+        // socket.on("other-player-selected", (data) => {
+        //   setOtherPersonSelected(data.selectedOption);
+        // });
       } catch (err) {
         console.log("Could not fetch because of error:", err);
       }
@@ -48,19 +58,19 @@ function Getques() {
   }, []);
 
   // Fisher-Yates algorithm for shuffling
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
+  // function shuffle(array) {
+  //   for (let i = array.length - 1; i > 0; i--) {
+  //     let j = Math.floor(Math.random() * (i + 1));
+  //     [array[i], array[j]] = [array[j], array[i]];
+  //   }
+  //   return array;
+  // }
 
-  function handleButtonClick(index) {
-    setSelectedOption(index); // Track the selected option
+  // function handleButtonClick(index) {
+  //   setSelectedOption(index); // Track the selected option
 
-    socket.emit("option-selected", { selectedOption: index });
-  }
+  //   socket.emit("option-selected", { selectedOption: index });
+  // }
 
   return (
     <div>
