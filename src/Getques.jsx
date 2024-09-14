@@ -39,12 +39,17 @@ function Getques() {
         // setSelectedOption(null); // Reset selected option for each new question
 
         socket.on('apiRes', (data)=>{
+          // console.log('in apiRes');
+          
           setCategory(data.category)
           setQues(data.ques)
           let options = [data.correct_answer, ...data.incorrect_answer]
-          console.log(options);
+          let shuffledOptions = shuffle(options)
+          let correctAnswerIndex = shuffledOptions.indexOf(data.correct_answer)
           
-          setOption(options)
+          setOption(shuffledOptions)
+          setCorrectIndex(correctAnswerIndex);
+          // console.log(option);
         })
 
         // socket.on("other-player-selected", (data) => {
@@ -58,19 +63,19 @@ function Getques() {
   }, []);
 
   // Fisher-Yates algorithm for shuffling
-  // function shuffle(array) {
-  //   for (let i = array.length - 1; i > 0; i--) {
-  //     let j = Math.floor(Math.random() * (i + 1));
-  //     [array[i], array[j]] = [array[j], array[i]];
-  //   }
-  //   return array;
-  // }
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
 
-  // function handleButtonClick(index) {
-  //   setSelectedOption(index); // Track the selected option
+  function handleButtonClick(index) {
+    setSelectedOption(index); // Track the selected option
 
-  //   socket.emit("option-selected", { selectedOption: index });
-  // }
+    // socket.emit("option-selected", { selectedOption: index });
+  }
 
   return (
     <div>
