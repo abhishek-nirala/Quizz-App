@@ -22,10 +22,6 @@ const io = new Server(server, {
   },
 });
 
-const apiRes = await axios.get("https://opentdb.com/api.php?amount=1");
-const data = apiRes.data.results[0];
-console.log(data);
-
 let players = [];
 
 app.get("/", (res, req) => {
@@ -35,16 +31,28 @@ app.get("/", (res, req) => {
 io.on("connection", (socket) => {
   console.log("a new user connected with an id : ", socket.id);
 
-  //adding a new player;
-  players.push(socket.id);
-  if (players.length > 2) socket.emit("room-full"); //not letting more than two player to join in on a single room
+  socket.on("get-data", async () => {
+    try {
+      console.log('in get-data');
+      
+      const apiRes = await axios.get("https://opentdb.com/api.php?amount=1");
+      const data = apiRes.data.results[0];
+      console.log(data);
 
-  //sending it on the option-selected by the other user.
-  socket.emit("apiRes", {
-    category: data.category,
-    ques: data.question,
-    correct_answer: data.correct_answer ,
-    incorrect_answer: data.incorrect_answers,
+      //adding a new player;
+      players.push(socket.id);
+      if (players.length > 2) socket.emit("room-full"); //not letting more than two player to join in on a single room
+
+      //sending it on the option-selected by the other user.
+      socket.emit("apiRes", {
+        category: data.category,
+        ques: data.question,
+        correct_answer: data.correct_answer,
+        incorrect_answer: data.incorrect_answers,
+      });
+    } catch (error) {
+      console.log("got an error", error);
+    }
   });
 });
 

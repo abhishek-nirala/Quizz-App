@@ -12,45 +12,25 @@ function Getques() {
   const [option, setOption] = useState([]); // Initialize as an array
   const [correctIndex, setCorrectIndex] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [otherPersonSelected, setOtherPersonSelected] = useState(null);
+  // const [otherPersonSelected, setOtherPersonSelected] = useState(null);
 
   useEffect(() => {
-    async function getQues() {
+    function getQues() {
       try {
-        // const response = await axios.get(
-        //   "https://opentdb.com/api.php?amount=1"
-        // );
-        // console.log(response);
+        socket.on("apiRes", (data) => {
+          console.log("in apiRes", data);
 
-        // setCategory(response.data.results[0].category);
-        // setQues(response.data.results[0].question);
+          setCategory(data.category);
+          setQues(data.ques);
+          let options = [data.correct_answer, ...data.incorrect_answer];
+          let shuffledOptions = shuffle(options);
+          let correctAnswerIndex = shuffledOptions.indexOf(data.correct_answer);
 
-        // const correctAnswer = response.data.results[0].correct_answer;
-        // let options = [
-        //   correctAnswer,
-        //   ...response.data.results[0].incorrect_answers,
-        // ];
-
-        // let shuffledOptions = shuffle(options);
-        // let correctAnswerIndex = shuffledOptions.indexOf(correctAnswer);
-
-        // setOption(shuffledOptions);
-        // setCorrectIndex(correctAnswerIndex);
-        // setSelectedOption(null); // Reset selected option for each new question
-
-        socket.on('apiRes', (data)=>{
-          // console.log('in apiRes');
-          
-          setCategory(data.category)
-          setQues(data.ques)
-          let options = [data.correct_answer, ...data.incorrect_answer]
-          let shuffledOptions = shuffle(options)
-          let correctAnswerIndex = shuffledOptions.indexOf(data.correct_answer)
-          
-          setOption(shuffledOptions)
+          setOption(shuffledOptions);
           setCorrectIndex(correctAnswerIndex);
+          setSelectedOption(null)
           // console.log(option);
-        })
+        });
 
         // socket.on("other-player-selected", (data) => {
         //   setOtherPersonSelected(data.selectedOption);
@@ -76,6 +56,11 @@ function Getques() {
 
     // socket.emit("option-selected", { selectedOption: index });
   }
+  const handleRefreshBtn = () => {
+    // location.reload()
+    // return window.open("https://google.com", "Example", "width=300,height=400");
+    socket.emit("get-data");
+  };
 
   return (
     <div>
@@ -99,9 +84,9 @@ function Getques() {
               buttonColor = "bg-green-500 text-white"; // Correct answer when wrong answer is selected
             }
           }
-          if (otherPersonSelected !== null)
-            if (index === otherPersonSelected)
-              buttonColor = "bg-yellow-500 text-white";
+          // if (otherPersonSelected !== null)
+          //   if (index === otherPersonSelected)
+          //     buttonColor = "bg-yellow-500 text-white";
 
           return (
             <button
@@ -115,16 +100,15 @@ function Getques() {
           );
         })}
       </div>
+      <button
+        className="text-[16px]  border rounded-lg p-1"
+        onClick={handleRefreshBtn}
+      >
+        Refresh
+      </button>
+      <p className="text-[10px] my-[5px]">( click Refresh to Start )</p>
     </div>
   );
 }
 
 export default Getques;
-
-// import axios from "axios";
-
-// async function importQues() {
-//   return ;
-// }
-
-// export default importQues;
